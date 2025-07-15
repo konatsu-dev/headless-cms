@@ -1,0 +1,58 @@
+services:
+  next:
+    image: node:22
+    volumes:
+      - ./next:/usr/src/app
+    working_dir: /usr/src/app
+    environment:
+      - WATCHPACK_POLLING=true
+    command: ["/bin/sh", "-c", "npm install && npm run dev"]
+    ports:
+      - 80:3000
+    networks:
+      headless-cms-network:
+        ipv4_address: 172.40.0.2
+
+  wp:
+    depends_on:
+      - mysql
+    image: wordpress:latest
+    ports:
+      - 8888:80
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_NAME: headless_cms_db
+      WORDPRESS_DB_USER: user
+      WORDPRESS_DB_PASSWORD: user
+      WP_DEBUG: 1
+      WP_DEBUG_LOG: 1
+    volumes:
+      - ./next/public/wp-content/uploads:/var/www/html/wp-content/uploads
+      - ./wp/theme:/var/www/html/wp-content/themes/theme
+    networks:
+      headless-cms-network:
+        ipv4_address: 172.40.0.3
+
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: headless_cms_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+      TZ: Asia/Tokyo
+    volumes:
+      - ./mysql/conf.d/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./mysql/data:/var/lib/mysql
+    networks:
+      headless-cms-network:
+        ipv4_address: 172.40.0.4
+
+networks:
+  headless-cms-network:
+    name: headless-cms-network
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.40.0.0/24
