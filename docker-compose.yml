@@ -6,7 +6,7 @@ services:
     working_dir: /usr/src/app
     environment:
       - WATCHPACK_POLLING=true
-    command: ["/bin/sh", "-c", "npm install && npm run dev"]
+    command: ["/bin/sh", "-c", "if [ ! -d node_modules ]; then npm install; fi && npm run dev"]
     ports:
       - 80:3000
     networks:
@@ -16,7 +16,7 @@ services:
   wp:
     depends_on:
       - mysql
-    image: wordpress:latest
+    image: wordpress:6.8
     ports:
       - 8888:80
     environment:
@@ -27,7 +27,6 @@ services:
       WP_DEBUG: 1
       WP_DEBUG_LOG: 1
     volumes:
-      - ./next/public/wp-content/uploads:/var/www/html/wp-content/uploads
       - ./wp/theme:/var/www/html/wp-content/themes/theme
     networks:
       headless-cms-network:
@@ -43,7 +42,7 @@ services:
       TZ: Asia/Tokyo
     volumes:
       - ./mysql/conf.d/my.cnf:/etc/mysql/conf.d/my.cnf
-      - ./mysql/data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
     networks:
       headless-cms-network:
         ipv4_address: 172.40.0.4
@@ -56,3 +55,6 @@ networks:
       driver: default
       config:
         - subnet: 172.40.0.0/24
+
+volumes:
+  mysql_data:
