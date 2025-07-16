@@ -7,7 +7,7 @@ type Post = {
 };
 
 async function getPosts(): Promise<Post[]> {
-  const res = await fetch('http://172.40.0.3/wp-json/wp/v2/posts', {
+  const res = await fetch('http://172.40.0.3/wp-json/wp/v2/posts?_embed', {
     next: { revalidate: 60 }, // ISR対応（60秒ごとに再検証）
   });
 
