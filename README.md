@@ -38,4 +38,4 @@
 
 - Next.jsは`http://localhost/`でアクセスできます（Dockerの80番ポートを使用）。
 - WordPressの管理画面やAPIは`http://localhost:8888/`で利用できます。
-- MySQLへ外部ツールから接続する場合は、ホスト`localhost`、ポート`3306`、ユーザー`user`、パスワード`user`を使用してください。
+- MySQLへ外部ツールから接続する場合は、ホスト`mysql`、ポート`3306`、ユーザー`user`、パスワード`user`を使用してください。
